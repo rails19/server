@@ -1,0 +1,60 @@
+body {margin:0; padding:0; background:#111; color:white; font-family:'Segoe UI', sans-serif}
+#container {max-width:700px; min-width:200px; margin:80px auto}
+input {border:0; background:rgba(0,0,0,.4); padding:5px; color:white; font-family:'Consolas', monospace; font-size:inherit}
+button {border:0; background:rgba(0,0,0,.4); padding:10px 25px; color:white; font-family:inherit; margin:15px 10px 10px 0; cursor:pointer}
+button:hover {background:rgba(0,0,0,.8)}
+a {color:white}
+a:hover {color:deepskyblue}
+*:focus {outline:none}
+
+.box {background:#1a1a1a; margin-bottom:30px}
+.box .head {background:#222; font-family:'Consolas', monospace; cursor: pointer}
+.box .head b {background:#333; padding:10px 20px; margin-right:10px; display:inline-block; text-transform:uppercase}
+
+#container > .get .head {background:hsl(225, 40%, 20%)}
+#container > .get .head b {background:hsl(225, 100%, 50%)}
+#container > .post .head {background:hsl(50, 40%, 20%)}
+#container > .post .head b {background:hsl(50, 100%, 50%)}
+#container > .put .head {background:hsl(260, 40%, 20%)}
+#container > .put .head b {background:hsl(260, 100%, 50%)}
+#container > .patch .head {background:hsl(320, 40%, 20%)}
+#container > .patch .head b {background:hsl(320, 100%, 50%)}
+#container > .delete .head {background:hsl(0, 40%, 20%)}
+#container > .delete .head b {background:hsl(0, 100%, 50%)}
+#container > .client .head {background:hsl(20, 40%, 20%)}
+#container > .client .head b {background:hsl(20, 100%, 50%)}
+#container > .server .head {background:hsl(10, 40%, 20%)}
+#container > .server .head b {background:hsl(10, 100%, 50%)}
+#container > .ok .head {background:hsl(140, 40%, 20%)}
+#container > .ok .head b {background:hsl(140, 100%, 50%)}
+
+.box.hidden .content {display:none}
+.box .content {padding:10px 20px}
+
+.method .parameters {margin:0; padding:0; list-style-type: none}
+.method .parameters li {padding:20px 0}
+.method .parameters .form {width:250px}
+.method .parameters input {display:block; width:100%}
+.method .parameters .list {display:inline-block}
+.method .parameters span, ul.codeobject span {display:block; padding:2px 0}
+.method .parameters .required .list .name:after {content:"*"; color:red}
+.method .parameters .list span {max-width:370px}
+.method .parameters .list .name {font-family:'Consolas', monospace}
+.method .parameters .list .name:before {content:"> "}
+.method .parameters .list .description {font-style:italic}
+.method .parameters span span, ul.codeobject span span {font-family:'Consolas', monospace; color:gray; display:inline}
+
+.method .parameters li .form {float:right}
+
+ul.codeobject {padding:30px 0 30px 30px}
+ul.codeobject li {padding:10px 0}
+ul.codeobject p {margin:0; padding-bottom:10px}
+ul.codeobject, ul.codeobject ul {list-style-type:none; margin:0}
+ul.codeobject ul {padding:0 0 0 60px}
+ul.codeobject:before, ul.codeobject:after, ul.codeobject .object:before, ul.codeobject .object:after, ul.codeobject .array:before, ul.codeobject .array:after {display:block; margin-left:-30px}
+ul.codeobject .object:before, ul.codeobject:before {content:"{"}
+ul.codeobject .object:after, ul.codeobject:after {content:"}"}
+ul.codeobject span.description {font-style:italic}
+ul.codeobject .array:before {content:"["}
+ul.codeobject .array:after {content:"]"}
+ul.codeobject .uniquality {content:" *unique"; color:gold; display:inline; margin-left:10px}
