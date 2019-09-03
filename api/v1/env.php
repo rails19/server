@@ -40,12 +40,15 @@ $GLOBALS['e_params_test'] = [
 * [dbname => [host, login, password], ...] */
 
 $GLOBALS['e_credentials'] = [
-	'database name' => [
+	'mainstock' => [
 		'host' => '',
 		'login' => '',
 		'password' => ''
 	]
 ];
+
+/*Connection string may vary if you want to connect to localhost. */
+$GLOBALS['e_connect_to_local'] = true;
 
 $GLOBALS['e_default_db'] = 'default db name';
 
@@ -277,6 +280,24 @@ function connect_pdo($dbname=null){
     		$e->getMessage()
     	);
     }
+}
+
+
+function connect_mongo($dbname=null){
+	/*Returns Mongo connection.*/
+
+	if(!$dbname)
+		$dbname = $GLOBALS['e_default_db'];
+	$account = $GLOBALS['e_credentials'][$dbname];
+	if($GLOBALS['e_connect_to_local'])
+		return $client = new MongoDB\Driver\Manager(
+			"mongodb://localhost:27017"
+		);
+	else
+		return $client = new MongoDB\Driver\Manager(
+			"mongodb+srv://{$account['login']}:{$account['password']}".
+			"@{$account['host']}"
+		);
 }
 
 
