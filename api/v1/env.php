@@ -286,7 +286,7 @@ function defdbip(){
 	* bad_gateway errors. */
 
 	$defdb = $GLOBALS['e_default_db'];
-	return $GLOBALS['e_credentials'][$defdb]['host'].
+	return $GLOBALS['e_credentials'][$defdb]['host'];
 }
 
 

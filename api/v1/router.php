@@ -3,7 +3,7 @@
 * to the corresponds php script. To get the idea of structure, please
 * go to api-structure.html in this directory*/
 
-header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Origin: http://localhost:8080");
 header("Access-Control-Allow-Credentials: true");
 
 $api_v = "v1";
