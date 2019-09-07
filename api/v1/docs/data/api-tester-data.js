@@ -83,6 +83,19 @@ APITester.reusable.Params_limitoffset = [
 		minimum: "0"
 	}
 ];
+
+APITester.reusable.Params_departureLimit = {
+	in: 'query',
+	name: 'departuresLimit',
+	type: 'integer',
+	required: false,
+	description: 'Number of limit of departures.',
+	examples: [10, 15, 5],
+	default: 10,
+	minimum: "0",
+	maximum: 50
+}
+
 APITester.reusable.Examples_dates = ['24-15-2018', '15-01-2017'];
 APITester.reusable.Params_dateFromTo = [
 	{
@@ -106,7 +119,7 @@ APITester.reusable.Params_dateFromTo = [
 ];
 
 APITester.paths = {
-	'station/{query}': {
+	'station/lookfor/{query}': {
 		'get': {
 			description: 'Search stations by query.',
 			parameters: [
@@ -118,12 +131,24 @@ APITester.paths = {
 					description: 'Search query',
 					examples: ['Аккаржа', 'Білг', 'Одес'],
 					default: null,
-				}
+				},
+				{
+					in: 'query',
+					name: 'limit',
+					type: 'integer',
+					required: false,
+					description: 'Number of limit of current selection.',
+					examples: [10, 15, 5],
+					default: 6,
+					minimum: "0",
+					maximum: 20
+				},
+				APITester.reusable.Params_departureLimit
 			],
-			raises: [200, 400, 403],
+			raises: [200, 400],
 			response: {
 				context: 'Array',
-				class: 'Station'
+				class: 'ShortStation'
 			}
 		}
 	},
@@ -131,11 +156,54 @@ APITester.paths = {
 		'get': {
 			description: 'Get station by its ID.',
 			parameters: [
-				APITester.reusable.Params_stationID
+				APITester.reusable.Params_stationID,
+				APITester.reusable.Params_departureLimit
 			],
 			raises: [200, 403, 404],
 			response: {
 				context: 'Object',
+				class: 'Station'
+			}
+		}
+	},
+	'station/nearest': {
+		'get': {
+			description: 'Returns info about nearest station.',
+			parameters: [
+				{
+					in: 'query',
+					name: 'lat',
+					type: 'integer',
+					required: false,
+					description: 'Latitude of the user. If not specified, IP location will be used.',
+					examples: [50.1158],
+					default: null
+				},
+				{
+					in: 'query',
+					name: 'lon',
+					type: 'integer',
+					required: false,
+					description: 'Longitude of the user. If not specified, IP location will be used.',
+					examples: [25.7198],
+					default: null
+				},
+				{
+					in: 'query',
+					name: 'limit',
+					type: 'integer',
+					required: false,
+					description: 'Limit of stations.',
+					examples: [1, 2, 3],
+					minimum: "0",
+					maximum: 10,
+					default: 1
+				},
+				APITester.reusable.Params_departureLimit
+			],
+			raises: [200, 403, 422],
+			response: {
+				context: 'Array',
 				class: 'Station'
 			}
 		}
@@ -210,7 +278,27 @@ APITester.paths = {
 			]
 		}
 	},
-	'route/{id}': {},
+	'route/{id}': {
+		'get': {
+			description: 'Get route (train schedule) by its id.',
+			parameters: [
+				{
+					in: 'path',
+					name: 'id',
+					type: 'integer',
+					required: true,
+					description: 'Number of the train.',
+					examples: [6048, 7041],
+					default: null
+				}
+			],
+			raises: [200, 404],
+			response: {
+				context: 'Object',
+				class: 'TrainSchedule'
+			}
+		}
+	},
 	'trips': {},
 	'trip/{id}': {},
 }
@@ -273,7 +361,7 @@ APITester.classes = {
 		}
 	},
 	TrainSchedule: {
-		description: "Represents schedule of one train.",
+		description: "Represents schedule of the train.",
 		properties: {
 			'train': {
 				refClass: 'Train',
