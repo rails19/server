@@ -49,8 +49,10 @@ window.onload = () => {
                     range = currParam.type === 'integer' ? `<span class="range">Range: <span>${ifEmpty(currParam.minimum, '~')} to ${ifEmpty(currParam.maximum, '~')}</span></span>` : '',
                     examples = currParam.examples.map(el => isNaN(el * 1) ? `"${el}"` : el).join(', '),
                     required = currParam.required ? 'required' : '',
-                    paramId = `${methodId}-${currParam.name}`;
-                parameters += `<li class="${required}"><div class="list"><span class="name">${currParam.name}</span><span class="type">${currParam.type}</span><span class="in">in: ${currParam.in}.</span><span class="description">${currParam.description}</span></div><div class="form"><input type="text" class="${methodId}-${currParam.in}" name="${currParam.name}"><span class="examples">Examples: <span>${examples}</span>,</span><span class="default">default: <span>${currParam.default}</span>.</span>${range}</div></li>`;
+                    paramId = `${methodId}-${currParam.name}`,
+                    input = currParam.type !== 'bool' ? `<input type="text" class="${methodId}-${currParam.in}" name="${currParam.name}">` : '',
+                    form = currParam.type !== 'bool' ? `<div class="form">${input}<span class="examples">Examples: <span>${examples}</span>,</span><span class="default">default: <span>${currParam.default}</span>.</span>${range}</div>` : '';
+                parameters += `<li class="${required}"><div class="list"><span class="name">${currParam.name}</span><span class="type">${currParam.type}</span><span class="in">in: ${currParam.in}.</span><span class="description">${currParam.description}</span></div>${form}</li>`;
             }
             let errors = currMethod.raises
             	.map(el => `<a href="#Error-${el}">${el}</a>`).join(', ');
@@ -78,7 +80,7 @@ window.onload = () => {
                 uniqueMark = '',
                 valueProperties = '';
             if (currProperty.refClass) {
-                exampleTag = `<a href="#Class-${currProperty.refClass}">{Class:${currProperty.refClass}}</a>`;
+                exampleTag = `${currProperty.type == 'array' ? '[' : ''}<a href="#Class-${currProperty.refClass}">{Class:${currProperty.refClass}}</a>${currProperty.type == 'array' ? ', ...]' : ''}`;
                 valueProperties = `<p><span>Type: <span>${currProperty.type}</span></span><span class="description">${currProperty.description}</span></p>`;
             } else {
                 example = currProperty.properties ? '...' : currProperty.example;
@@ -113,7 +115,7 @@ window.onload = () => {
         for (const error in currType) {
             if (!currType.hasOwnProperty(error)) continue;
             const currError = currType[error];
-            write(`<div class="box error ${type} hidden" id="Error-${currError.code}"><div class="head" onclick="toggleThis(this.parentNode)"><b>${type}</b><span>${currError.code}: ${currError.name}</span></div><div class="content">${currError.description}<br>Here's the example of output:<code>${lightUpJSON(JSON.stringify(currError.body, null, '\t').concat('\n'))}</code></div></div>`);
+            write(`<div class="box error ${type} hidden" id="Error-${currError.code}"><div class="head" onclick="toggleThis(this.parentNode)"><b>${type}</b><span>${currError.code}: ${currError.name}</span></div><div class="content">${currError.description}<br>Here's the example of output:<code>${lightUpJSON(JSON.stringify(currError.body, null, '  ').concat('\n'))}</code></div></div>`);
         }
     }
 };
