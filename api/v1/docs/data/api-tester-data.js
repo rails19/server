@@ -17,15 +17,48 @@ APITester.reusable = {};
 APITester.reusable.Variable_fulldate = '2018-07-12T09:28:47+02:00';
 APITester.reusable.Variable_date = '2018-07-12';
 
-APITester.reusable.Param_searchString = {
-	in: 'query',
-	name: 'q',
-	type: 'string',
-	required: false,
-	description: 'Search string for your items.',
-	examples: ["Cute puppies", "uaresistance"],
-	default: null
+APITester.reusable.Property_route = {
+	type: 'integer',
+	maxLength: 4,
+	description: 'ID of route.',
+	default: null,
+	example: 1111
 };
+
+APITester.reusable.Property_train = {
+	type: 'integer',
+	maxLength: 4,
+	description: 'ID of train.',
+	default: null,
+	example: 6047
+};
+
+APITester.reusable.Property_stationName = {
+	type: 'string',
+	maxLength: 50,
+	description: 'Name of the station.',
+	default: null,
+	unique: 'name',
+	example: 'Київ пасажирський'
+};
+
+APITester.reusable.Property_stationID = {
+	type: 'integer',
+	maxLength: 5,
+	description: 'ID of the station.',
+	default: null,
+	unique: 'id'
+};
+
+APITester.reusable.Params_stationID = {
+	in: 'path',
+	name: 'id',
+	type: 'integer',
+	required: true,
+	description: 'ID of the station',
+	examples: [6548, 1225],
+	default: null
+}
 
 APITester.reusable.Params_limitoffset = [
 	{
@@ -73,7 +106,113 @@ APITester.reusable.Params_dateFromTo = [
 ];
 
 APITester.paths = {
-	/*methods will be here.*/
+	'station/{query}': {
+		'get': {
+			description: 'Search stations by query.',
+			parameters: [
+				{
+					in: 'path',
+					name: 'query',
+					type: 'string',
+					required: true,
+					description: 'Search query',
+					examples: ['Аккаржа', 'Білг', 'Одес'],
+					default: null,
+				}
+			],
+			raises: [200, 400, 403],
+			response: {
+				context: 'Array',
+				class: 'Station'
+			}
+		}
+	},
+	'station/{id}': {
+		'get': {
+			description: 'Get station by its ID.',
+			parameters: [
+				APITester.reusable.Params_stationID
+			],
+			raises: [200, 403, 404],
+			response: {
+				context: 'Object',
+				class: 'Station'
+			}
+		}
+	},
+	'station/{id}/directions': {
+		'get': {
+			description: 'Get station reachable without changing the train.',
+			parameters: [
+				APITester.reusable.Params_stationID,
+				{
+					in: 'query',
+					name: 'showIntermediate',
+					type: 'bool',
+					required: false,
+					description: 'If this parameter is not checked, only endings of the routes will be showed.',
+					defalut: false,
+					examples: [],
+				}
+			],
+			raises: [200, 403],
+			response: {
+				context: 'Array',
+				class: 'ShortStation'
+			}
+		}
+	},
+	'station/{id1}/to/{id2}': {
+		'get': {
+			description: 'Make a route between two given stations.',
+			raises: [200, 403, 404],
+			response: {
+				context: 'Array',
+				class: 'PlannedRoute'
+			},
+			parameters: [
+				{
+					in: 'path',
+					name: 'id1',
+					type: 'integer',
+					required: true,
+					description: 'ID of the first station',
+					examples: [6548, 1225],
+					default: null
+				},
+				{
+					in: 'path',
+					name: 'id2',
+					type: 'integer',
+					required: true,
+					description: 'ID of the second station',
+					examples: [6548, 1225],
+					default: null
+				},
+				{
+					in: 'query',
+					name: 'avoidTransfers',
+					type: 'bool',
+					required: false,
+					description: 'Method will return 404 Not Found error, if route cannot be formed without train transfers.',
+					examples: [""],
+					default: false
+				},
+				{
+					in: 'query',
+					name: 'startDate',
+					type: 'string',
+					required: false,
+					examples: [APITester.reusable.Variable_fulldate],
+					default: "Current date&time",
+					description: 'Time, when trip should start.'
+				}
+			]
+		}
+	},
+	'route/{id}': {},
+	'trips': {},
+	'trip/{id}': {},
 }
 
 APITester.classes = {
