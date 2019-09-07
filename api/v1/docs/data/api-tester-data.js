@@ -77,7 +77,121 @@ APITester.paths = {
 }
 
 APITester.classes = {
-	/*classes will be here*/
+	Station: {
+		description: 'This class represents station.',
+		properties: {
+			'name': APITester.reusable.Property_stationName,
+			'id': APITester.reusable.Property_stationID,
+			'isPlatform': {
+				type: 'bool',
+				description: 'Describes whether the station is platform (зупинковий пункт).',
+				default: false,
+				example: 'false'
+			},
+			'direction': {
+				type: 'integer',
+				maxLength: 2,
+				description: 'Direction of the station, where first number is one of "Львівська", "Одеська", etc., and the second one is subdirection. See the attachment for details.',
+				default: null,
+				example: 42
+			},
+			'departures': {
+				refClass: 'Departure',
+				type: 'array',
+				description: 'Array of nearest departures.'
+			}
+		}
+	},
+	ShortStation: {
+		description: 'The main information about station',
+		properties: {
+			'name': APITester.reusable.Property_stationName,
+			'id': APITester.reusable.Property_stationID
+		}
+	},
+	Departure: {
+		description: "Represents nearest departure from station.",
+		properties: {
+			'estimate': {
+				type: 'integer',
+				maxLength: 4,
+				description: 'Time to this departure in minutes',
+				default: null,
+				example: 8
+			},
+			'route': APITester.reusable.Property_route,
+			'train': APITester.reusable.Property_train,
+			'start': {
+				refClass: 'ShortStation',
+				type: 'object',
+				description: 'Start station of the entire route.'
+			},
+			'end': {
+				refClass: 'ShortStation',
+				type: 'object',
+				description: 'End station of the entire route.'
+			}
+		}
+	},
+	TrainSchedule: {
+		description: "Represents schedule of one train.",
+		properties: {
+			'train': {
+				refClass: 'Train',
+				type: 'object',
+				description: 'Class of the train.'
+			},
+			'path': {
+				refClass: 'ScheduleItem',
+				type: 'array',
+				description: 'Array of schedule items.'
+			}
+		}
+	},
+	ScheduleItem: {
+		description: "Represents item of the schedule: station, arrival/departure time, stop time, etc.",
+		properties: {
+			'station': {
+				refClass: 'ShortStation',
+				type: 'object',
+				description: 'A station.'
+			},
+			'arrival': {
+				type: 'string',
+				description: 'Time, when train arrives to the station.',
+				default: null,
+				examples: [APITester.reusable.Variable_fulldate]
+			},
+			'departure': {
+				type: 'string',
+				description: 'Time, when train departs from the station.',
+				default: null,
+				examples: [APITester.reusable.Variable_fulldate]
+			}
+		}
+	},
+	PlannedRoute: {
+		description: "Represents planned route between two station, which may include transfers.",
+		properties: {
+			'path': {
+				refClass: 'TrainSchedule',
+				type: 'array',
+				description: 'Clipped schedule of trains, which shapes the route.'
+			}
+		}
+	},
+	Train: {
+		description: "Represents a train",
+		properties: {
+			'n': {
+				type: 'integer',
+				description: "Number (and ID) of the train.",
+				unique: true,
+				default: null,
+				example: 6048
+			}
+		}
+	}
 }
 
 APITester.errors = {
