@@ -85,7 +85,7 @@ if( file_exists($scriptName) ){
 		"js" => "application/javascript",
 		"json" => "application/json"
 	}[
-		$pathinfo($location, PATHINFO_EXTENSION)
+		pathinfo($location, PATHINFO_EXTENSION)
 	] ?? "text/plain";
 	header("Content-Type: {$mime}; charset=UTF-8");
 	readfile($location);
