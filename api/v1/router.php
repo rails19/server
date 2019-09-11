@@ -20,8 +20,6 @@ if(!strcmp(substr($request_uri, 1, 6), "shell:")){
 	die();
 }
 
-header('Content-Type: application/json; charset=UTF-8');
-
 //wipe out get-parameters if they passed
 $request_uri = explode("?", $request_uri)[0];
 
@@ -66,8 +64,7 @@ function callScript($path){
 			$_REQUEST[ $param_name ] = $curr_level;
 			$dir .= "/_{$param_name}";
 		}else{
-			http_response_code(404);
-			die();
+			return false;
 		}
 	}
 	return callScript($path);
@@ -75,10 +72,26 @@ function callScript($path){
 $scriptName = callScript( array_reverse($f) ); //convert to stack
 
 if( file_exists($scriptName) ){
+	header('Content-Type: application/json; charset=UTF-8');
 	require_once $framework_uri;
 	require_once $scriptName;
-}else{
-	http_response_code(404);
+	die();
+} else {
+	// check, if user asks for file
+	$location = $_SERVER["DOCUMENT_ROOT"] . $request_uri;
+	$mime = {
+		"html" => "text/html",
+		"css" => "text/css",
+		"js" => "application/javascript",
+		"json" => "application/json"
+	}[
+		$pathinfo($location, PATHINFO_EXTENSION)
+	] ?? "text/plain";
+	header("Content-Type: {$mime}; charset=UTF-8");
+	readfile($location);
 	die();
 }
+
+http_response_code(404);
+
 ?>
