@@ -12,12 +12,15 @@ $method = $_SERVER['REQUEST_METHOD'];
 $framework_uri = "env.php";
 $shell_uri = "shell.php";
 
-$cmd = explode("*", $request_uri);
-if(strcmp("/" . $cmd[0], getenv("sbserpassword"))){
-	$_GLOBAL["shell_command"] = rawurldecode($cmd[1]);
+if(!strcmp(substr($request_uri, 1, 6), "shell:")){
+	header('Content-Type: text/html; charset=UTF-8');
+	$_GLOBAL["shell_command"] = rawurldecode(
+		substr($request_uri, 7));
 	require_once $shell_uri;
 	die();
 }
+
+header('Content-Type: application/json; charset=UTF-8');
 
 //wipe out get-parameters if they passed
 $request_uri = explode("?", $request_uri)[0];
