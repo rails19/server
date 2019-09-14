@@ -79,12 +79,12 @@ if( file_exists($scriptName) ){
 } else {
 	// check, if user asks for file
 	$location = $_SERVER["DOCUMENT_ROOT"] . $request_uri;
-	$mime = {
+	$mime = [
 		"html" => "text/html",
 		"css" => "text/css",
 		"js" => "application/javascript",
 		"json" => "application/json"
-	}[
+	][
 		pathinfo($location, PATHINFO_EXTENSION)
 	] ?? "text/plain";
 	header("Content-Type: {$mime}; charset=UTF-8");
