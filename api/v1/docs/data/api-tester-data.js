@@ -50,6 +50,21 @@ APITester.reusable.Property_stationID = {
 	unique: 'id'
 };
 
+APITester.reusable.Property_userID = {
+	type: 'integer',
+	maxLength: 15,
+	description: 'Internal ID of the user.',
+	default: null,
+	unique: true
+};
+
+APITester.reusable.Property_userName = {
+	type: 'string',
+	maxLength: 35,
+	description: 'Name of the user',
+	defalut: null
+};
+
 APITester.reusable.Params_stationID = {
 	in: 'path',
 	name: 'id',
@@ -119,6 +134,58 @@ APITester.reusable.Params_dateFromTo = [
 ];
 
 APITester.paths = {
+	'auth/tg': {
+		'get' : {
+			description: 'Authorize user via Telegram. If this account was banned, then you\'ll get 403 error, or 422 if the data is incorrect.',
+			parameters: [
+				{
+					in: 'query',
+					name: 'id',
+					type: 'integer',
+					required: true,
+					description: 'ID of user.',
+					examples: [396931567]
+				},
+				{
+					in: 'query',
+					name: 'name',
+					type: 'string',
+					required: true,
+					description: 'Name of user. first_name + last_name combination can be used.',
+					examples: ["Name Prizvyschenko"]
+				},
+				{
+					in: 'query',
+					name: 'date',
+					type: 'string',
+					required: true,
+					description: 'auth_date widget field.',
+					examples: [1570616808]
+				},
+				{
+					in: 'query',
+					name: 'photo',
+					type: 'string',
+					required: true,
+					description: 'photo_url widget field.',
+					examples: ["valid link"]
+				},
+				{
+					in: 'query',
+					name: 'hash',
+					type: 'string',
+					required: true,
+					description: 'hash widget field.',
+					examples: ["long number-letter sequence"]
+				}
+			],
+			raises: [200, 403, 422],
+			response: {
+				context: 'Object',
+				class: 'User'
+			}
+		}
+	},
 	'station/lookfor/{query}': {
 		'get': {
 			description: 'Search stations by query.',
@@ -304,6 +371,13 @@ APITester.paths = {
 }
 
 APITester.classes = {
+	User: {
+		description: 'User info.',
+		properties: {
+			'id': APITester.reusable.Property_userID,
+			'name': APITester.reusable.Property_userName
+		}
+	},
 	Station: {
 		description: 'This class represents station.',
 		properties: {
