@@ -133,7 +133,52 @@ APITester.reusable.Params_dateFromTo = [
 	}
 ];
 
+APITester.reusable.Property_access_token = {
+	in: 'query',
+	name: 'token',
+	type: 'string',
+	required: true,
+	description: 'Your access_token.',
+	examples: ["sadc61t6w14rv3dfx2145aedaswtvr54"]
+};
+
 APITester.paths = {
+	'auth/renew': {
+		'get': {
+			description: 'Generate new access_token. The old one is still usable.',
+			parameters: [
+				{
+					in: 'query',
+					name: 'token',
+					type: 'string',
+					required: true,
+					description: 'Your relogin_token.',
+					examples: ["sadc61t6w14rv3dfx2145aedaswtvr54"]
+				}
+			],
+			raises: [200, 403],
+			response: {
+				context: 'Object',
+				class: 'LoginSuccess'
+			}
+		}
+	},
+	'auth/reject': {
+		'get': {
+			description: 'Disable current access_token and relogin_token associated with it.',
+			parameters: [APITester.reusable.Property_access_token],
+			raises: [204, 403],
+			response: {}
+		}
+	},
+	'auth/logout': {
+		'get': {
+			description: 'Disable all access_tokens and relogin_tokens for current user.',
+			parameters: [APITester.reusable.Property_access_token],
+			raises: [204, 403],
+			response: {}
+		}
+	},
 	'auth/tg': {
 		'get' : {
 			description: 'Authorize user via Telegram. If this account was banned, then you\'ll get 403 error, or 422 if the data is incorrect.',
@@ -148,11 +193,19 @@ APITester.paths = {
 				},
 				{
 					in: 'query',
-					name: 'name',
+					name: 'first_name',
 					type: 'string',
 					required: true,
-					description: 'Name of user. first_name + last_name combination can be used.',
-					examples: ["Name Prizvyschenko"]
+					description: "first_name field. This name will be assigned as the user name",
+					examples: ["Name"]
+				},
+				{
+					in: 'query',
+					name: 'last_name',
+					type: 'string',
+					required: true,
+					description: "last_name field",
+					examples: ["Prizvyschenko"]
 				},
 				{
 					in: 'query',
@@ -177,12 +230,20 @@ APITester.paths = {
 					required: true,
 					description: 'hash widget field.',
 					examples: ["long number-letter sequence"]
+				},
+				{
+					in: 'query',
+					name: 'username',
+					type: 'string',
+					required: true,
+					description: "username field.",
+					examples: ["mycoolnick"]
 				}
 			],
 			raises: [200, 403, 422],
 			response: {
 				context: 'Object',
-				class: 'User'
+				class: 'LoginSuccess'
 			}
 		}
 	},
@@ -376,6 +437,34 @@ APITester.classes = {
 		properties: {
 			'id': APITester.reusable.Property_userID,
 			'name': APITester.reusable.Property_userName
+		}
+	},
+	LoginSuccess: {
+		description: "Returns when user is logged in (or registered) successfully.",
+		properties: {
+			'user': {
+				refClass: 'User',
+				type: 'object',
+				description: 'Info about logged in user.'
+			},
+			'access_token': {
+				type: 'string',
+				description: 'Now you can use this token to make requests to server for `expire` minutes. After that use the relogin_token.',
+				default: false,
+				example: '5as25awc68 ...'
+			},
+			'relogin_token': {
+				type: 'string',
+				description: 'Use this token to renew access_token. This tolen is being stored for 1 week.',
+				default: false,
+				example: '25w6crew5c ...'
+			},
+			'expire': {
+				type: 'integer',
+				description: 'Your access_token expire after given number if minutes.',
+				default: 60,
+				example: [5, 180]
+			}
 		}
 	},
 	Station: {
